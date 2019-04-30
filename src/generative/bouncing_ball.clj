@@ -4,11 +4,11 @@
   (:import (processing.core PApplet PVector))
   (:require [generative.processing-clj :refer :all]))
 
-(declare ^PVector location)
-(declare ^PVector velocity)
-
 (defn -main [& args]
   (PApplet/main "generative.bouncing_ball"))
+
+(declare ^PVector location)
+(declare ^PVector velocity)
 
 (settings
   (size 200 200 P2D))
