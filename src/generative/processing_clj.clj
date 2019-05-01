@@ -73,20 +73,19 @@
   ([] `(.-mouseButton this))
   ([button] `(= (mouseButton) (. PConstants ~button))))
 
-;; buggy TODO: Fix me
 (defmacro shape3 [[kind & _] [mode & _] & code]
-  (let [k (if kind [`(. PConstants ~kind)] [])
-        m (if mode [`(. PConstants ~mode)] [])]
+  (let [k (if kind [(symbol (str `PConstants "/" kind))] [])
+        m (if mode [(symbol (str `PConstants "/" mode))] [])]
     `(do
        (beginShape ~@k)
        ~@code
        (endShape ~@m))))
 
-(defmacro shape1 [kind & code]
-  `(shape3 ['~kind] [] ~@code))
+(defmacro shape-1 [kind & code]
+  `(shape3 [~kind] [] ~@code))
 
-(defmacro shape2 [mode & code]
-  `(shape3 [] ['~mode] ~@code))
+(defmacro shape-2 [mode & code]
+  `(shape3 [] [~mode] ~@code))
 
 (defmacro shape [& code]
   `(shape3 [] [] ~@code))

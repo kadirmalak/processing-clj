@@ -1,7 +1,7 @@
 (ns generative.p3d
   (:gen-class
     :extends processing.core.PApplet)                       ;; we need a class extending processing.core.PApplet
-  (:import (processing.core PApplet PVector))
+  (:import (processing.core PApplet PVector PConstants))
   (:require [generative.processing-clj :refer :all]))
 
 (defn -main [& args]
@@ -19,8 +19,8 @@
   (stroke 255)
   (fill 127)
 
-(shape2 CLOSE
-        (vertex -100, -100, 0)
-        (vertex  100, -100, 0)
-        (vertex  100,  100, 0)
-        (vertex -100,  100, 0)))
+(shape-2 CLOSE
+        (vertex -100 -100 0)
+        (vertex  100 -100 0)
+        (vertex  100  100 0)
+        (vertex -100  100 0)))
