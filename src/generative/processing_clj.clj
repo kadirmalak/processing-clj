@@ -6,6 +6,20 @@
 
 (defn set-this [val] (def this val))
 
+(def PDF "processing.pdf.PGraphicsPDF")
+
+(defmacro beginRecord [renderer filename]
+  `(.beginRecord this ~renderer ~filename))
+
+(defmacro endRecord [] `(.endRecord this))
+
+(defn linspace [start stop n]
+  {:pre [(> n 0)]
+   :post [(= (count %) n)]}
+  (let [diff (- stop start)
+        step (/ diff (dec n))]
+    (map #(* step %) (range n))))
+
 (def PI PConstants/PI)
 
 (defmacro size
@@ -47,16 +61,30 @@
 (defmacro vertex [& args] `(.vertex this ~@args))
 (defmacro noStroke [] `(.noStroke this))
 (defmacro noFill [] `(.noFill this))
+(defmacro noCursor [] `(.noCursor this))
 (defmacro fill [& args] `(.fill this ~@args))
 (defmacro mousePressed [] `(.-mousePressed this))
+(defmacro frameCount [] `(.-frameCount this))
 (defmacro mouseX [] `(.-mouseX this))
 (defmacro mouseY [] `(.-mouseY this))
-(defmacro width [] `(.-width this))
-(defmacro height [] `(.-height this))
+(defmacro width
+  ([] `(.-width this))
+  ([coef] `(* (width) ~coef))
+  ([num denom] `(width (/ ~num ~denom))))
+(defmacro height
+  ([] `(.-height this))
+  ([coef] `(* (height) ~coef))
+  ([num denom] `(height (/ ~num ~denom))))
 (defmacro pmouseX [] `(.-pmouseX this))
 (defmacro pmouseY [] `(.-pmouseY this))
 (defmacro ellipse [a b c d] `(.ellipse this ~a ~b ~c ~d))
 (defmacro strokeWeight [weight] `(.strokeWeight this ~weight))
+(defmacro cos [rad] `(Math/cos ~rad))
+(defmacro sin [rad] `(Math/sin ~rad))
+(defmacro radians [degrees] `(Math/toRadians ~degrees))
+(defmacro cosr [deg] `(Math/cos (radians ~deg)))
+(defmacro sinr [deg] `(Math/sin (radians ~deg)))
+(defmacro rotate [angle] `(.rotate this ~angle))
 (defmacro rotateX [angle] `(.rotateX this ~angle))
 (defmacro rotateY [angle] `(.rotateY this ~angle))
 (defmacro rotateZ [angle] `(.rotateZ this ~angle))
@@ -72,6 +100,12 @@
 (defmacro mouseButton
   ([] `(.-mouseButton this))
   ([button] `(= (mouseButton) (. PConstants ~button))))
+(defmacro pkey
+  ([] `(.-key this))
+  ([val] `(= (pkey) (. PConstants ~val))))
+(defmacro keyCode
+  ([] `(.-keyCode this))
+  ([val] `(= (keyCode) (. PConstants ~val))))
 
 (defmacro shape3 [[kind & _] [mode & _] & code]
   (let [k (if kind [(symbol (str `PConstants "/" kind))] [])
@@ -80,6 +114,14 @@
        (beginShape ~@k)
        ~@code
        (endShape ~@m))))
+
+(defmacro colorMode [mode & args]
+  `(.colorMode this (. PConstants ~mode) ~@args))
+
+(defmacro scale
+  ([s] `(.scale this ~s))
+  ([x y] `(.scale this ~x ~y))
+  ([x y z] `(.scale this ~x ~y ~z)))
 
 (defmacro shape-1 [kind & code]
   `(shape3 [~kind] [] ~@code))
@@ -98,6 +140,10 @@
 (defmacro settings [& code]
   `(defn ~'-settings [~'this]
      (set-this ~'this)
+     ~@code))
+
+(defmacro keyReleased [& code]
+  `(defn ~'-keyReleased [~'this ~'event]
      ~@code))
 
 (defmacro setup [& code]
