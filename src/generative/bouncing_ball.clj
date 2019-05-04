@@ -26,15 +26,15 @@
 
   (.. location (add velocity))
 
-  (with-pvector
-    [location velocity]
-    (if (or (> x0 (width))
-            (< x0 0))
-      (set! x1 (* -1 x1)))
+  (with-vectors
+    [l location v velocity]
+    (if (or (> l.x (width))
+            (< l.x 0))
+      (set! v.x (* -1 v.x)))
 
-    (if (or (> y0 (height))
-            (< y0 0))
-      (set! y1 (* -1 y1))))
+    (if (or (> l.y (height))
+            (< l.y 0))
+      (set! v.y (* -1 v.y))))
 
   (stroke 0)
   (fill 175)

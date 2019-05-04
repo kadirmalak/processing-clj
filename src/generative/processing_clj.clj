@@ -51,15 +51,18 @@
        (let [~locals item#]
          ~@body))))
 
-(defmacro with-pvector [vecs & code]
-  (let [n (count vecs)
+(defmacro with-vectors [bindings & code]
+  (let [vars (vec (keep-indexed #(if (even? %1) %2) bindings))
+        vecs (vec (keep-indexed #(if (odd? %1) %2) bindings))
+        n (count vecs)
         m (into
             {}
             (for [s ['x 'y 'z]
                   i (range n)]
-              (let [v (get vecs i)
-                    a (symbol (str s i))
-                    b (list (symbol (str ".-" s)) v)]
+              (let [_vec (get vecs i)
+                    _var (get vars i)
+                    a (symbol (str _var "." s))
+                    b (list (symbol (str ".-" s)) _vec)]
                 [a b])))]
     (cons 'do (prewalk-replace m code))))
 
