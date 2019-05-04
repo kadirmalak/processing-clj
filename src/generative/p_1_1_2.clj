@@ -12,19 +12,19 @@
 
 (setup)
 
-(def savePDF false)
+(def savePDF (atom false))
 (def segmentCount 360)
 (def radius 300)
 
 (keyReleased
 
-  (if (#{\p \P} (pkey))
-    (def savePDF true))
+  (if (#{\p \P} (key_))
+    (swap! savePDF (fn [_] true)))
 
   (println this)
   (println event)
-  (println (pkey))
-  (def segmentCount (case (pkey)
+  (println (key_))
+  (def segmentCount (case (key_)
                       \1 360
                       \2 45
                       \3 24
@@ -33,7 +33,7 @@
                       360)))
 
 (draw
-  (if savePDF
+  (if @savePDF
     (beginRecord PDF (str (frameCount) ".pdf")))
 
   (noStroke)
@@ -51,6 +51,6 @@
           (vertex vx vy)
           (fill angle (mouseX) (mouseY))))))
 
-  (if savePDF
-    (def savePDF false)
+  (if @savePDF
+    (swap! savePDF (fn [_] false))
     (endRecord)))

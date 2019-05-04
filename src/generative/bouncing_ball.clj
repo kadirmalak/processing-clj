@@ -16,8 +16,8 @@
 (setup
   (smooth)
   (background 255)
-  (def location (pvector 100 100))
-  (def velocity (pvector 2.5 5)))                           ;; equivalent of background(255, 255, 255)
+  (def location (vector_ 100 100))
+  (def velocity (vector_ 2.5 5)))                           ;; equivalent of background(255, 255, 255)
 
 (draw
   (noStroke)

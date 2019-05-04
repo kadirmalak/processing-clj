@@ -1,10 +1,12 @@
 (ns generative.processing-clj
-  (:import (processing.core PConstants PApplet PVector))
+  (:import (processing.core PConstants PApplet PVector PImage))
   (:require [clojure.walk :refer :all]))
 
 (declare ^PApplet this)
 
 (defn set-this [val] (def this val))
+
+(defn toggle [a] (swap! a (fn [v] (not v))))
 
 (def PDF "processing.pdf.PGraphicsPDF")
 
@@ -34,7 +36,7 @@
   ([x y] `(.translate this ~x ~y))
   ([x y z] `(.translate this ~x ~y ~z)))
 
-(defmacro pvector
+(defmacro vector_
   ([] `(new PVector))
   ([x y] `(new PVector ~x ~y))
   ([x y z] `(new PVector ~x ~y ~z)))
@@ -42,6 +44,12 @@
 (defmacro x [^PVector v] `(.-x ~v))
 (defmacro y [^PVector v] `(.-y ~v))
 (defmacro z [^PVector v] `(.-z ~v))
+
+(defmacro doseqfor [idx-var seq-exprs & body]
+  (let [locals (vec (keep-indexed #(if (even? %1) %2) seq-exprs))]
+    `(doseq [[~idx-var item#] (map-indexed vector (for ~seq-exprs ~locals))]
+       (let [~locals item#]
+         ~@body))))
 
 (defmacro with-pvector [vecs & code]
   (let [n (count vecs)
@@ -55,6 +63,14 @@
                 [a b])))]
     (cons 'do (prewalk-replace m code))))
 
+(defmacro loadImage
+  ([filename] `(.loadImage this ~filename))
+  ([filename extension] `(.loadImage this ~filename ~extension)))
+(defmacro img-get
+  ([^PImage img] `(.get ~img))
+  ([^PImage img x y] `(.get ~img ~x ~y))
+  ([^PImage img x y w h] `(.get ~img ~x ~y ~w ~h)))
+(defmacro map_ [value start1 stop1 start2 stop2] `(PApplet/map ~value ~start1 ~stop1 ~start2 ~stop2))
 (defmacro background [& args] `(.background this ~@args))
 (defmacro stroke [& args] `(.stroke this ~@args))
 (defmacro rect [& args] `(.rect this ~@args))
@@ -79,11 +95,13 @@
 (defmacro pmouseY [] `(.-pmouseY this))
 (defmacro ellipse [a b c d] `(.ellipse this ~a ~b ~c ~d))
 (defmacro strokeWeight [weight] `(.strokeWeight this ~weight))
-(defmacro cos [rad] `(Math/cos ~rad))
-(defmacro sin [rad] `(Math/sin ~rad))
-(defmacro radians [degrees] `(Math/toRadians ~degrees))
-(defmacro cosr [deg] `(Math/cos (radians ~deg)))
-(defmacro sinr [deg] `(Math/sin (radians ~deg)))
+(defmacro cos [rad] `(PApplet/cos ~rad))
+(defmacro sin [rad] `(PApplet/sin ~rad))
+(defmacro max_ [& args] `(PApplet/max ~@args))
+(defmacro min_ [& args] `(PApplet/min ~@args))
+(defmacro radians [degrees] `(PApplet/radians ~degrees))
+(defmacro cosr [deg] `(PApplet/cos (radians ~deg)))
+(defmacro sinr [deg] `(PApplet/sin (radians ~deg)))
 (defmacro rotate [angle] `(.rotate this ~angle))
 (defmacro rotateX [angle] `(.rotateX this ~angle))
 (defmacro rotateY [angle] `(.rotateY this ~angle))
@@ -100,9 +118,9 @@
 (defmacro mouseButton
   ([] `(.-mouseButton this))
   ([button] `(= (mouseButton) (. PConstants ~button))))
-(defmacro pkey
+(defmacro key_
   ([] `(.-key this))
-  ([val] `(= (pkey) (. PConstants ~val))))
+  ([val] `(= (key_) (. PConstants ~val))))
 (defmacro keyCode
   ([] `(.-keyCode this))
   ([val] `(= (keyCode) (. PConstants ~val))))
