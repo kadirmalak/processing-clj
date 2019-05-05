@@ -2,7 +2,8 @@
   (:gen-class
     :extends processing.core.PApplet)                       ;; we need a class extending processing.core.PApplet
   (:import (processing.core PApplet))
-  (:require [generative.processing-clj :refer :all]))
+  (:require [generative.processing-clj :refer :all]
+            [generative.utils :refer :all]))
 
 (defn -main [& args]
   (PApplet/main "generative.p_1_2_2"))
@@ -13,7 +14,7 @@
   (size 600 600))
 
 (setup
-  (colorMode HSB 360 100 100 100)
+  (colorMode (c HSB) 360 100 100 100)
   (noStroke)
   (noCursor)
   (def img (loadImage "pic1.jpg")))

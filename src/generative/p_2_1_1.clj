@@ -2,7 +2,8 @@
   (:gen-class
     :extends processing.core.PApplet)                       ;; we need a class extending processing.core.PApplet
   (:import (processing.core PApplet PConstants))
-  (:require [generative.processing-clj :refer :all]))
+  (:require [generative.processing-clj :refer :all]
+            [generative.utils :refer :all]))
 
 (defn -main [& args]
   (PApplet/main "generative.p_2_1_1"))
@@ -12,7 +13,7 @@
 (def actStrokeCap PConstants/ROUND)
 
 (settings
-  (size 1200 1200))
+  (size 600 600))
 
 (draw
   (background 255)

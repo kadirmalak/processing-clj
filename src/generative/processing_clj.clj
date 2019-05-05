@@ -3,10 +3,7 @@
   (:require [clojure.walk :refer :all]))
 
 (declare ^PApplet this)
-
 (defn set-this [val] (def this val))
-
-(defn toggle [a] (swap! a (fn [v] (not v))))
 
 (def PDF "processing.pdf.PGraphicsPDF")
 
@@ -15,18 +12,12 @@
 
 (defmacro endRecord [] `(.endRecord this))
 
-(defn linspace [start stop n]
-  {:pre [(> n 0)]
-   :post [(= (count %) n)]}
-  (let [diff (- stop start)
-        step (/ diff (dec n))]
-    (map #(* step %) (range n))))
-
-(def PI PConstants/PI)
+(defmacro c [name] `(. PConstants ~name))
+(def PI (c PI))
 
 (defmacro size
   ([w h] `(.size this ~w ~h PConstants/P2D))
-  ([w h renderer] `(.size this ~w ~h (. PConstants ~renderer))))
+  ([w h renderer] `(.size this ~w ~h ~renderer)))
 
 (defmacro line
   ([x1 y1 x2 y2] `(.line this ~x1 ~y1 ~x2 ~y2))
@@ -44,12 +35,6 @@
 (defmacro x [^PVector v] `(.-x ~v))
 (defmacro y [^PVector v] `(.-y ~v))
 (defmacro z [^PVector v] `(.-z ~v))
-
-(defmacro doseqfor [idx-var seq-exprs & body]
-  (let [locals (vec (keep-indexed #(if (even? %1) %2) seq-exprs))]
-    `(doseq [[~idx-var item#] (map-indexed vector (for ~seq-exprs ~locals))]
-       (let [~locals item#]
-         ~@body))))
 
 (defmacro with-vectors [bindings & code]
   (let [vars (vec (keep-indexed #(if (even? %1) %2) bindings))
@@ -112,38 +97,36 @@
 (defmacro rotateY [angle] `(.rotateY this ~angle))
 (defmacro rotateZ [angle] `(.rotateZ this ~angle))
 (defmacro smooth [& args] `(.smooth this ~@args))
-(defmacro ellipseMode [mode] `(.ellipseMode this (. PConstants ~mode)))
-(defn strokeCap [cap] (.strokeCap this cap))
+(defmacro ellipseMode [mode] `(.ellipseMode this ~mode))
+(defmacro strokeCap [cap] `(.strokeCap this ~cap))
 (defmacro random
   ([high] `(.random this ~high))
   ([low high] `(.random this ~low ~high)))
 (defmacro beginShape
   ([] `(.beginShape this))
-  ([kind] `(.beginShape this (. PConstants ~kind))))
+  ([kind] `(.beginShape this ~kind)))
 (defmacro endShape
   ([] `(.endShape this))
-  ([mode] `(.endShape this (. PConstants ~mode))))
-(defmacro rectMode [mode] `(.rectMode this (. PConstants ~mode)))
+  ([mode] `(.endShape this ~mode)))
+(defmacro rectMode [mode] `(.rectMode this ~mode))
 (defmacro mouseButton
   ([] `(.-mouseButton this))
-  ([button] `(= (mouseButton) (. PConstants ~button))))
+  ([button] `(= (mouseButton) ~button)))
 (defmacro key_
   ([] `(.-key this))
-  ([val] `(= (key_) (. PConstants ~val))))
+  ([val] `(= (key_) ~val)))
 (defmacro keyCode
   ([] `(.-keyCode this))
-  ([val] `(= (keyCode) (. PConstants ~val))))
+  ([val] `(= (keyCode) ~val)))
 
-(defmacro shape3 [[kind & _] [mode & _] & code]
-  (let [k (if kind [(symbol (str `PConstants "/" kind))] [])
-        m (if mode [(symbol (str `PConstants "/" mode))] [])]
-    `(do
-       (beginShape ~@k)
-       ~@code
-       (endShape ~@m))))
+(defmacro shape3 [kind mode & code]
+  `(do
+     (beginShape ~@kind)
+     ~@code
+     (endShape ~@mode)))
 
 (defmacro colorMode [mode & args]
-  `(.colorMode this (. PConstants ~mode) ~@args))
+  `(.colorMode this ~mode ~@args))
 
 (defmacro scale
   ([s] `(.scale this ~s))
