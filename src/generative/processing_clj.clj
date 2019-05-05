@@ -73,7 +73,8 @@
   ([^PImage img] `(.get ~img))
   ([^PImage img x y] `(.get ~img ~x ~y))
   ([^PImage img x y w h] `(.get ~img ~x ~y ~w ~h)))
-(defmacro map_ [value start1 stop1 start2 stop2] `(PApplet/map ~value ~start1 ~stop1 ~start2 ~stop2))
+(defmacro map_ [value start1 stop1 start2 stop2]
+  `(PApplet/map ~value ~start1 ~stop1 ~start2 ~stop2))
 (defmacro background [& args] `(.background this ~@args))
 (defmacro stroke [& args] `(.stroke this ~@args))
 (defmacro rect [& args] `(.rect this ~@args))
@@ -98,6 +99,7 @@
 (defmacro pmouseY [] `(.-pmouseY this))
 (defmacro ellipse [a b c d] `(.ellipse this ~a ~b ~c ~d))
 (defmacro strokeWeight [weight] `(.strokeWeight this ~weight))
+(defmacro randomSeed [seed] `(.randomSeed this ~seed))
 (defmacro cos [rad] `(PApplet/cos ~rad))
 (defmacro sin [rad] `(PApplet/sin ~rad))
 (defmacro max_ [& args] `(PApplet/max ~@args))
@@ -111,6 +113,10 @@
 (defmacro rotateZ [angle] `(.rotateZ this ~angle))
 (defmacro smooth [& args] `(.smooth this ~@args))
 (defmacro ellipseMode [mode] `(.ellipseMode this (. PConstants ~mode)))
+(defn strokeCap [cap] (.strokeCap this cap))
+(defmacro random
+  ([high] `(.random this ~high))
+  ([low high] `(.random this ~low ~high)))
 (defmacro beginShape
   ([] `(.beginShape this))
   ([kind] `(.beginShape this (. PConstants ~kind))))
