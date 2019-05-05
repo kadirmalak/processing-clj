@@ -11,7 +11,7 @@
 (declare ^PVector velocity)
 
 (settings
-  (size 200 200 (c P2D)))
+  (size 200 200 P2D))
 
 (setup
   (smooth)

@@ -1,19 +1,34 @@
 (ns generative.processing-clj
-  (:import (processing.core PConstants PApplet PVector PImage))
+  (:import (processing.core PConstants PApplet PVector PImage)
+           (java.lang.reflect Modifier))
   (:require [clojure.walk :refer :all]))
 
 (declare ^PApplet this)
 (defn set-this [val] (def this val))
 
-(def PDF "processing.pdf.PGraphicsPDF")
+(defn is-public [method]
+  (Modifier/isPublic (.getModifiers method)))
+
+(defn public-fields [class]
+  (->> class
+       (.getDeclaredFields)
+       (filter is-public)
+       (map #(.getName %))
+       (distinct)
+       (sort)))
+
+(defn define-constants []
+  (let [defs (for [f (public-fields PConstants)]
+               (list 'def (symbol f) `(. PConstants ~(symbol f))))]
+    (doall (for [d defs]
+             (eval d)))))
+
+(define-constants)
 
 (defmacro beginRecord [renderer filename]
   `(.beginRecord this ~renderer ~filename))
 
 (defmacro endRecord [] `(.endRecord this))
-
-(defmacro c [name] `(. PConstants ~name))
-(def PI (c PI))
 
 (defmacro size
   ([w h] `(.size this ~w ~h PConstants/P2D))

@@ -8,7 +8,7 @@
   (PApplet/main "generative.core"))
 
 (settings
-  (size 640 480 (c P3D)))
+  (size 640 480 P3D))
 
 (setup
   (println "setup called")
@@ -24,5 +24,5 @@
         y (mouseY)
         width 80
         height 80]
-    (ellipseMode (c CENTER))
+    (ellipseMode CENTER)
     (ellipse x y width height)))

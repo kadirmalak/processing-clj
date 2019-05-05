@@ -9,7 +9,7 @@
   (PApplet/main "generative.p_1_1_2"))
 
 (settings
-  (size 800 800 (c P2D)))
+  (size 800 800 P2D))
 
 (setup)
 
@@ -38,11 +38,11 @@
     (beginRecord PDF (str (frameCount) ".pdf")))
 
   (noStroke)
-  (colorMode (c HSB) 360 (width) (height))
+  (colorMode HSB 360 (width) (height))
   (background 360)
 
   (shape-1
-    (c TRIANGLE_FAN)
+    TRIANGLE_FAN
     (vertex (width 0.5)
             (height 1 2))
     (doall

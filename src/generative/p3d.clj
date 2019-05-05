@@ -8,7 +8,7 @@
   (PApplet/main "generative.p3d"))
 
 (settings
-  (size 640 360 (c P3D)))
+  (size 640 360 P3D))
 
 (setup
   )
@@ -19,7 +19,7 @@
   (stroke 255)
   (fill 127)
 
-(shape-2 (c CLOSE)
+(shape-2 CLOSE
         (vertex -100 -100 0)
         (vertex  100 -100 0)
         (vertex  100  100 0)

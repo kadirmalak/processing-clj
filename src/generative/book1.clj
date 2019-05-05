@@ -14,8 +14,8 @@
   (noCursor))
 
 (draw
-  (colorMode (c HSB) 360 100 100)
-  (rectMode (c CENTER))
+  (colorMode HSB 360 100 100)
+  (rectMode CENTER)
   (noStroke)
   (background (/ (mouseY) 2) 100 100)
 

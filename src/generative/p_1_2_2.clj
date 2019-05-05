@@ -14,7 +14,7 @@
   (size 600 600))
 
 (setup
-  (colorMode (c HSB) 360 100 100 100)
+  (colorMode HSB 360 100 100 100)
   (noStroke)
   (noCursor)
   (def img (loadImage "pic1.jpg")))

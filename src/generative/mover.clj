@@ -15,7 +15,7 @@
 
 (draw
   (cond
-    (and (mousePressed) (mouseButton (c LEFT))) (fill 0)
-    (and (mousePressed) (= (mouseButton) (c RIGHT))) (fill 255)
+    (and (mousePressed) (mouseButton LEFT)) (fill 0)
+    (and (mousePressed) (= (mouseButton) RIGHT)) (fill 255)
     :else (fill 126))
   (rect 25 25 50 50))
