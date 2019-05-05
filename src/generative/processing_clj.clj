@@ -77,6 +77,7 @@
   `(PApplet/map ~value ~start1 ~stop1 ~start2 ~stop2))
 (defmacro background [& args] `(.background this ~@args))
 (defmacro stroke [& args] `(.stroke this ~@args))
+(defmacro color [& args] `(.color this ~@args))
 (defmacro rect [& args] `(.rect this ~@args))
 (defmacro vertex [& args] `(.vertex this ~@args))
 (defmacro noStroke [] `(.noStroke this))
@@ -100,6 +101,9 @@
 (defmacro ellipse [a b c d] `(.ellipse this ~a ~b ~c ~d))
 (defmacro strokeWeight [weight] `(.strokeWeight this ~weight))
 (defmacro randomSeed [seed] `(.randomSeed this ~seed))
+(defmacro atan2 [x y] `(PApplet/atan2 ~x ~y))
+(defmacro sqrt [n] `(PApplet/sqrt ~n))
+(defmacro sq [n] `(PApplet/sq ~n))
 (defmacro cos [rad] `(PApplet/cos ~rad))
 (defmacro sin [rad] `(PApplet/sin ~rad))
 (defmacro max_ [& args] `(PApplet/max ~@args))
@@ -113,7 +117,12 @@
 (defmacro rotateZ [angle] `(.rotateZ this ~angle))
 (defmacro smooth [& args] `(.smooth this ~@args))
 (defmacro ellipseMode [mode] `(.ellipseMode this ~mode))
+(defmacro shapeMode [mode] `(.shapeMode this ~mode))
 (defmacro strokeCap [cap] `(.strokeCap this ~cap))
+(defmacro loadShape [filename] `(.loadShape this ~filename))
+(defmacro dist
+  ([x1 y1 x2 y2] `(PApplet/dist ~x1 ~y1 ~x2 ~y2))
+  ([x1 y1 z1 x2 y2 z2] `(PApplet/dist ~x1 ~y1 ~z1 ~x2 ~y2 ~z2)))
 (defmacro random
   ([high] `(.random this ~high))
   ([low high] `(.random this ~low ~high)))
@@ -130,15 +139,34 @@
 (defmacro key_
   ([] `(.-key this))
   ([val] `(= (key_) ~val)))
+
+(defmacro key-map [key & mappings]
+  (let [m {key (list `key_)}
+        key-groups (vec (keep-indexed #(if (even? %1) %2) mappings))
+        actions1 (vec (keep-indexed #(if (odd? %1) %2) mappings))
+        actions2 (prewalk-replace m actions1)
+        clauses (concat
+                  (interleave
+                    (map (fn [g] (list (list `set g) (list `key_))) key-groups)
+                    actions2)
+                  [:else :pass])]                           ;;TODO: make :pass configurable
+    `(cond ~@clauses)))
+
 (defmacro keyCode
   ([] `(.-keyCode this))
   ([val] `(= (keyCode) ~val)))
 
-(defmacro shape3 [kind mode & code]
+(defmacro saveFrame
+  ([] `(.saveFrame this))
+  ([filename] `(.saveFrame this ~filename)))
+
+(defmacro pushMatrix [] `(.pushMatrix this))
+(defmacro popMatrix [] `(.popMatrix this))
+(defmacro push-pop-matrix [& code]
   `(do
-     (beginShape ~@kind)
+     (pushMatrix)
      ~@code
-     (endShape ~@mode)))
+     (popMatrix)))
 
 (defmacro colorMode [mode & args]
   `(.colorMode this ~mode ~@args))
@@ -148,14 +176,25 @@
   ([x y] `(.scale this ~x ~y))
   ([x y z] `(.scale this ~x ~y ~z)))
 
-(defmacro shape-1 [kind & code]
-  `(shape3 [~kind] [] ~@code))
+(defmacro shape
+  ([shape] `(.shape this ~shape))
+  ([shape x y] `(.shape this ~shape ~x ~y))
+  ([shape a b c d] `(.shape this ~shape ~a ~b ~c ~d)))
 
-(defmacro shape-2 [mode & code]
-  `(shape3 [] [~mode] ~@code))
+(defmacro begin-end-shape-3 [kind mode & code]
+  `(do
+     (beginShape ~@kind)
+     ~@code
+     (endShape ~@mode)))
 
-(defmacro shape [& code]
-  `(shape3 [] [] ~@code))
+(defmacro begin-end-shape-1 [kind & code]
+  `(begin-end-shape-3 [~kind] [] ~@code))
+
+(defmacro begin-end-shape-2 [mode & code]
+  `(begin-end-shape-3 [] [~mode] ~@code))
+
+(defmacro begin-end-shape [& code]
+  `(begin-end-shape-3 [] [] ~@code))
 
 (defmacro frameRate [& fps]
   (if (pos? (count fps))
@@ -169,6 +208,10 @@
 
 (defmacro keyReleased [& code]
   `(defn ~'-keyReleased [~'this ~'event]
+     ~@code))
+
+(defmacro keyPressed [& code]
+  `(defn ~'-keyPressed [~'this ~'event]
      ~@code))
 
 (defmacro setup [& code]

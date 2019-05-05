@@ -41,7 +41,7 @@
   (colorMode HSB 360 (width) (height))
   (background 360)
 
-  (shape-1
+  (begin-end-shape-1
     TRIANGLE_FAN
     (vertex (width 0.5)
             (height 1 2))

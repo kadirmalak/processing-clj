@@ -19,8 +19,8 @@
   (stroke 255)
   (fill 127)
 
-(shape-2 CLOSE
-        (vertex -100 -100 0)
-        (vertex  100 -100 0)
-        (vertex  100  100 0)
-        (vertex -100  100 0)))
+(begin-end-shape-2 CLOSE
+                   (vertex -100 -100 0)
+                   (vertex  100 -100 0)
+                   (vertex  100  100 0)
+                   (vertex -100  100 0)))

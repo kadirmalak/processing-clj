@@ -10,7 +10,7 @@
 
 (def tileCount 20)
 (def actRandomSeed 0)
-(def actStrokeCap PConstants/ROUND)
+(def actStrokeCap ROUND)
 
 (settings
   (size 600 600))
