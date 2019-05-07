@@ -140,16 +140,33 @@
   ([] `(.-key this))
   ([val] `(= (key_) ~val)))
 
+(defn rm-at [v i]
+  (concat
+    (subvec v 0 i)
+    (subvec v (inc i))))
+
+(defn rm-first [v item]
+  (let [i (.indexOf v item)]
+    (if (neg? i)
+      [i v]
+      [i (rm-at v i)])))
+
 (defmacro key-map [key & mappings]
   (let [m {key (list `key_)}
-        key-groups (vec (keep-indexed #(if (even? %1) %2) mappings))
-        actions1 (vec (keep-indexed #(if (odd? %1) %2) mappings))
-        actions2 (prewalk-replace m actions1)
+
+        keys (vec (keep-indexed #(if (even? %1) %2) mappings))
+        actions (vec (keep-indexed #(if (odd? %1) %2) mappings))
+        actions (prewalk-replace m actions)
+
+        [i keys] (rm-first keys :else)
+        else-action (get actions i)
+        actions (rm-at actions i)
+
         clauses (concat
                   (interleave
-                    (map (fn [g] (list (list `set g) (list `key_))) key-groups)
-                    actions2)
-                  [:else :pass])]                           ;;TODO: make :pass configurable
+                    (map (fn [g] (list (list `set g) (list `key_))) keys)
+                    actions)
+                  [:else else-action])]
     `(cond ~@clauses)))
 
 (defmacro keyCode

@@ -33,7 +33,7 @@
   (def currentShape (loadShape "module_1.svg")))
 
 (draw
-  (if savePDF
+  (when savePDF
     (beginRecord PDF (str (frameCount) ".pdf")))
 
   (background 255)
@@ -79,10 +79,9 @@
           (noStroke)
           (shape currentShape 0 0 newShapeSize newShapeSize)))))
 
-  (if savePDF
-    (do
-      (def savePDF false)
-      (endRecord))))
+  (when savePDF
+    (def savePDF false)
+    (endRecord)))
 
 (keyPressed
 
@@ -103,7 +102,9 @@
              (def tileWidth (/ (width) tileCount))
              (def tileHeight (/ (height) tileCount)))
            [\1 \2 \3 \4 \5 \6 \7]
-           (def currentShape (loadShape (str "module_" k ".svg"))))
+           (def currentShape (loadShape (str "module_" k ".svg")))
+           :else
+           (println (str "unknown key pressed: " k)))
 
   (condp = (keyCode)
     UP (def shapeSize (+ shapeSize 5))
