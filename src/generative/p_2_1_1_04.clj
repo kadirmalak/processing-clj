@@ -106,9 +106,9 @@
            :else
            (println (str "unknown key pressed: " k)))
 
-  (condp = (keyCode)
-    UP (def shapeSize (+ shapeSize 5))
-    DOWN (def shapeSize (max_ (- shapeSize 5) 5))
-    LEFT (def shapeAngle (- shapeAngle 5))
-    RIGHT (def shapeAngle (+ shapeAngle 5))
-    :pass))
+  (key-code k
+            UP (def shapeSize (+ shapeSize 5))
+            DOWN (def shapeSize (max_ (- shapeSize 5) 5))
+            LEFT (def shapeAngle (- shapeAngle 5))
+            RIGHT (def shapeAngle (+ shapeAngle 5))
+            (println (str k " pressed..."))))

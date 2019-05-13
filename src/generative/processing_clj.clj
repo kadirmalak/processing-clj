@@ -169,6 +169,11 @@
                   [:else else-action])]
     `(cond ~@clauses)))
 
+(defmacro key-code [key & mappings]
+  `(let [~key (keyCode)]
+     (condp = ~key
+       ~@mappings)))
+
 (defmacro keyCode
   ([] `(.-keyCode this))
   ([val] `(= (keyCode) ~val)))
